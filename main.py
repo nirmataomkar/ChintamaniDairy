@@ -14,12 +14,14 @@ import os
 #print(df)
 
 
-def create_pdf(name, cow, crate, cm_total, buffalo, brate, bm_total,other, pending_bill, amount,file_path,image_path):
+def create_pdf(name, cow, crate, cm_total, buffalo, brate, bm_total,other, pending_bill, amount,file_path,image_path, qr_code_path,month):
     c = canvas.Canvas(file_path)
     c.setFont('Helvetica-Bold', 20)
     c.drawString(50,750,'Invoice - Chintamani Dugdhalay ')
     c.setFont('Helvetica', 15)
     c.drawString(50,730,'Contact : Mr. Chinmay Tare +91 84598 43328')
+    c.drawString(50,710,'Bill for month -'+month)
+
 
     #add date time
     today = datetime.datetime.today().strftime('%d-%m-%Y')
@@ -32,6 +34,11 @@ def create_pdf(name, cow, crate, cm_total, buffalo, brate, bm_total,other, pendi
     # Logo 2 small right side
     image = ImageReader(image_path)
     c.drawImage(image, 450, 700, width=1 * inch, height=1 * inch)
+
+    # Adding QR Code
+    qrcode = ImageReader(qr_code_path)
+    c.drawImage(qrcode,350,130, width=3 * inch,height=3 * inch)
+
 
 
     #add a line seperator
@@ -117,7 +124,7 @@ def create_pdf(name, cow, crate, cm_total, buffalo, brate, bm_total,other, pendi
 
     # Footer
     c.setFont('Helvetica', 15)
-    c.drawString(50, 300, " Bank Name :")
+    c.drawString(50, 300, " Bank Name : IDBI Bank")
     c.drawString(50, 280, " Account name : Chinmay Tare")
     c.drawString(50, 260, " Account number : 0459102000020651")
     c.drawString(50, 240, " IFSC code : IBKL0000459")
@@ -125,7 +132,7 @@ def create_pdf(name, cow, crate, cm_total, buffalo, brate, bm_total,other, pendi
     c.save()
 
 
-def generate_bills(excel_path,pdf_output_path,image_path):
+def generate_bills(excel_path,pdf_output_path,image_path, qr_code_path):
     df = pd.read_excel(excel_path)
     print(df.columns)
     for index ,row in df.iterrows():
@@ -139,10 +146,11 @@ def generate_bills(excel_path,pdf_output_path,image_path):
         other = row['Other']
         pending_bill = row['Previous_pending']
         amount = row['Total']
+        month = row['Month']
 
         pdf_file_name = f"{name}.pdf"
         pdf_file_path = f"{pdf_output_path}/{pdf_file_name}"
-        create_pdf(name, cow, crate, cm_total, buffalo, brate,bm_total,other, pending_bill, amount, pdf_file_path, image_path)
+        create_pdf(name, cow, crate, cm_total, buffalo, brate,bm_total,other, pending_bill, amount, pdf_file_path, image_path, qr_code_path ,month)
 
 
 def main():
@@ -160,6 +168,7 @@ def main():
     # Specify the path of the input Excel file and image file
     excel_path = os.path.join(current_dir, "Invoice.xlsx")
     image_path = os.path.join(current_dir, "logo.jpg")
+    qr_code_path = os.path.join(current_dir, "QR_code.jpg")
 
     # below part is working on my machine but for executable trying another approach with above code
     #excel_path = 'Invoice.xlsx'
@@ -169,7 +178,7 @@ def main():
     #pdf_output_path = ".\\Output"
     #image_path = ".\\logo.jpg"
 
-    generate_bills(excel_path, pdf_output_path, image_path)
+    generate_bills(excel_path, pdf_output_path, image_path, qr_code_path)
 
 
 if __name__ == '__main__':
