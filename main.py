@@ -14,61 +14,135 @@ import os
 #print(df)
 
 
-def create_pdf(name,amount,qty,rate,file_path,image_path):
+def create_pdf(name, cow, crate, cm_total, buffalo, brate, bm_total,other, pending_bill, amount,file_path,image_path):
     c = canvas.Canvas(file_path)
     c.setFont('Helvetica-Bold', 20)
-    c.drawString(50,750,'Invoice - Chintamani Dugdhalay Vadgaon sheri ')
+    c.drawString(50,750,'Invoice - Chintamani Dugdhalay ')
     c.setFont('Helvetica', 15)
-    c.drawString(50,720,'Contact : Mr. Chinmay Tare +91 84598 43328')
+    c.drawString(50,730,'Contact : Mr. Chinmay Tare +91 84598 43328')
 
     #add date time
     today = datetime.datetime.today().strftime('%d-%m-%Y')
-    c.drawString(400, 780, "Date: " + today)
+    c.drawString(450, 780, "Date: " + today)
 
-    #Add image
+    #Logo 1 big left
+    #image = ImageReader(image_path)
+    #c.drawImage(image,50,400,width=4*inch,height=4*inch)
+
+    # Logo 2 small right side
     image = ImageReader(image_path)
-    c.drawImage(image,50,400,width=4*inch,height=4*inch)
+    c.drawImage(image, 450, 700, width=1 * inch, height=1 * inch)
+
 
     #add a line seperator
-    c.setStrokeColor(HexColor('#0047AB'))
+    c.setStrokeColor(HexColor('#000000'))
     c.setLineWidth(2)
-    c.line(50, 700, 550, 700)
+    c.line(45, 700, 550, 700)
+
+    #Vertical line
+    c.setStrokeColor(HexColor('#000000'))
+    c.setLineWidth(2)
+    c.line(45, 700, 45, 360)
+    c.line(550, 700, 550, 360)
+    c.line(150, 670, 150, 520)
+    c.line(250, 670, 250, 520)
+    c.line(350, 670, 350, 520)
 
     c.setFont('Helvetica', 15)
-    c.drawString(250,680,'Customer Name: '+ name)
-    c.drawString(350,650,'Total Quantity: '+ str(qty))
-    c.drawString(350,600,'Rate per litre: ' + str(rate))
+    c.drawString(50,680,'Customer Name:')
+    c.drawString(250, 680,  name)
+
+    c.setStrokeColor(HexColor('#000000'))
+    c.setLineWidth(2)
+    c.line(45, 670, 550, 670)
+
+    #First line - Product , Litre , Rate , Subtotal
+    c.drawString(50,630,'Product')
+    c.drawString(200,630,'Litre')
+    c.drawString(300,630, 'Rate')
+    c.drawString(450,630, 'Sub Total')
+
+    c.setStrokeColor(HexColor('#000000'))
+    c.setLineWidth(2)
+    c.line(45, 620, 550, 620)
+
+    #Cow milk
+    c.drawString(50, 580, 'Cow Milk')
+    c.drawString(200, 580, str(cow))
+    c.drawString(300, 580, str(crate))
+    c.drawString(450, 580, str(cm_total))
+
+    c.setStrokeColor(HexColor('#000000'))
+    c.setLineWidth(2)
+    c.line(45, 570, 550, 570)
+
+    #Buffalo milk
+    c.drawString(50, 530, 'Buffalo Milk')
+    c.drawString(200, 530, str(buffalo))
+    c.drawString(300, 530, str(brate))
+    c.drawString(450, 530, str(bm_total))
+
+    c.setStrokeColor(HexColor('#000000'))
+    c.setLineWidth(2)
+    c.line(45, 520, 550, 520)
+
+    # Other Items
+    c.drawString(50, 470, 'Other Items')
+    c.drawString(450, 470, str(other))
+
+    c.setStrokeColor(HexColor('#000000'))
+    c.setLineWidth(2)
+    c.line(45, 460, 550, 460)
+
+    # Previous pending
+    c.drawString(50, 420, 'Pending Bill')
+    c.drawString(450, 420, str(pending_bill))
+
+
+    #c.drawString(350,650,'Total Quantity: '+ str(qty))
+    #c.drawString(350,600,'Rate per litre: ' + str(rate))
 
     # add a line seperator
-    c.setStrokeColor(HexColor('#0047AB'))
+    c.setStrokeColor(HexColor('#000000'))
     c.setLineWidth(2)
-    c.line(50, 380, 550, 380)
+    c.line(45, 410, 550, 410)
 
-    c.drawString(350, 360, 'Total amount: ' + str(amount))
+    c.setFont('Helvetica-Bold', 16)
+    c.drawString(50, 370, 'Total amount: ' )
+    c.drawString(450, 370, str(amount))
 
-    c.setStrokeColor(HexColor('#0047AB'))
+    c.setStrokeColor(HexColor('#000000'))
     c.setLineWidth(2)
-    c.line(50, 340, 550, 340)
+    c.line(45, 360, 550, 360)
 
-    c.drawString(50, 320, " Please pay before 10th of every month")
-    c.drawString(50, 300, " Bank Name - :")
-    c.drawString(50, 280, " Account name :")
-    c.drawString(50, 260, " Account number:")
-    c.drawString(50, 240, " IFSC code:")
-    c.drawString(50, 220, " UPI ID : ")
+    # Footer
+    c.setFont('Helvetica', 15)
+    c.drawString(50, 300, " Bank Name :")
+    c.drawString(50, 280, " Account name : Chinmay Tare")
+    c.drawString(50, 260, " Account number : 0459102000020651")
+    c.drawString(50, 240, " IFSC code : IBKL0000459")
+    c.drawString(50, 220, " GPAY No : 8459843328")
     c.save()
 
 
 def generate_bills(excel_path,pdf_output_path,image_path):
     df = pd.read_excel(excel_path)
+    print(df.columns)
     for index ,row in df.iterrows():
         name = row['Cust_name']
+        cow = row['Cow']
+        crate = row['C_rate']
+        cm_total = row['CM_total']
+        buffalo = row['Buffalo']
+        brate = row['B_rate']
+        bm_total = row['BM_total']
+        other = row['Other']
+        pending_bill = row['Previous_pending']
         amount = row['Total']
-        qty = row['Quantity']
-        rate = row['Rate']
+
         pdf_file_name = f"{name}.pdf"
         pdf_file_path = f"{pdf_output_path}/{pdf_file_name}"
-        create_pdf(name, amount, qty , rate, pdf_file_path,image_path)
+        create_pdf(name, cow, crate, cm_total, buffalo, brate,bm_total,other, pending_bill, amount, pdf_file_path, image_path)
 
 
 def main():
@@ -87,7 +161,6 @@ def main():
     excel_path = os.path.join(current_dir, "Invoice.xlsx")
     image_path = os.path.join(current_dir, "logo.jpg")
 
-
     # below part is working on my machine but for executable trying another approach with above code
     #excel_path = 'Invoice.xlsx'
     #pdf_output_path = r'C:\Users\Dell\PycharmProjects\ChintamaniDairy\Output'
@@ -96,9 +169,7 @@ def main():
     #pdf_output_path = ".\\Output"
     #image_path = ".\\logo.jpg"
 
-
-
-    generate_bills(excel_path,pdf_output_path,image_path)
+    generate_bills(excel_path, pdf_output_path, image_path)
 
 
 if __name__ == '__main__':
