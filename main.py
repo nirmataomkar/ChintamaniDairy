@@ -7,6 +7,8 @@ from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
 import openpyxl
 import datetime
+import os
+
 
 #df = pd.read_excel('Invoice.xlsx', usecols=['Sr.No','Cust_name','Quantity','Rate','Total'],header=0)
 #print(df)
@@ -70,9 +72,32 @@ def generate_bills(excel_path,pdf_output_path,image_path):
 
 
 def main():
-    excel_path = 'Invoice.xlsx'
-    pdf_output_path = r'C:\Users\Dell\PycharmProjects\ChintamaniDairy\Output'
-    image_path = 'logo.jpg'
+
+    # Get the absolute path of the current working directory
+    current_dir = os.path.abspath(os.getcwd())
+    # Specify the name of the subdirectory for output files
+    output_subdir = "Output"
+    # Combine the current directory path with the output subdirectory path
+    pdf_output_path = os.path.join(current_dir, output_subdir)
+    # Check if the output directory exists, and create it if it does not
+    if not os.path.exists(pdf_output_path):
+        os.makedirs(pdf_output_path)
+
+    # Specify the path of the input Excel file and image file
+    excel_path = os.path.join(current_dir, "Invoice.xlsx")
+    image_path = os.path.join(current_dir, "logo.jpg")
+
+
+    # below part is working on my machine but for executable trying another approach with above code
+    #excel_path = 'Invoice.xlsx'
+    #pdf_output_path = r'C:\Users\Dell\PycharmProjects\ChintamaniDairy\Output'
+    #image_path = 'logo.jpg'
+    #excel_path = ".\\Invoice.xlsx"
+    #pdf_output_path = ".\\Output"
+    #image_path = ".\\logo.jpg"
+
+
+
     generate_bills(excel_path,pdf_output_path,image_path)
 
 
